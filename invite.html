@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Invite" content="Thiệp mời">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Send it to the back */
+            overflow: hidden; /* Hide overflow */
+            background: url('https://wedding9300.wpcomstaging.com/wp-content/uploads/2024/07/nen.png') no-repeat center center;
+            background-size: cover; /* Cover the entire screen */
+        }
+        .content-image {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            max-width: 90%;
+            max-height: 80%;
+            padding-bottom: 10%;
+        }
+        .content-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%; /* Ensure image does not exceed container */
+            max-height: 100%; /* Ensure image does not exceed container */
+            object-fit: contain; /* Maintain aspect ratio and fit within container */
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: url('https://wedding9300.wpcomstaging.com/wp-content/uploads/2024/06/o-1.png') no-repeat center center;
+            background-size: cover;
+            width: 90%;
+            max-width: 600px;
+            height: auto;
+            aspect-ratio: 1.51/1; /* Adjust aspect ratio according to your background image */
+            padding: 20px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .popup.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(155,155,155,0.5);
+            z-index: 999;
+        }
+        .overlay.show {
+            display: block;
+        }
+        .popup-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            width: 100%;
+            height: 50%;
+        }
+        .popup-form select {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 90%;
+            height: auto;
+            font-size: 1em;
+            box-sizing: border-box;
+            font-family: "Merriweather", serif;
+        }
+        .popup-form .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Add space between buttons */
+            width: 90%;
+        }
+        .popup-form .buttons img {
+            height: 40px;
+            cursor: pointer;
+        }
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: url('https://wedding9300.wpcomstaging.com/wp-content/uploads/2024/06/2.png') no-repeat center center;
+            background-size: cover;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        .bottom-bar img.logo {
+            height: 50px;
+            margin: 0 20px;
+        }
+        .bottom-bar img.button {
+            height: 40px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-bar img.logo {
+                height: 40px;
+                margin: 0 10px;
+            }
+            .bottom-bar img.button {
+                height: 35px;
+                margin: 0 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bottom-bar img.logo {
+                height: 30px;
+                margin: 0 5px;
+            }
+            .bottom-bar img.button {
+                height: 30px;
+                margin: 0 5px;
+            }
+        }
+        @media (orientation: landscape) {
+            .content-image {
+                max-width: 90%; /* Adjust width for landscape mode */
+            }
+            .content-image img {
+                height: unset;
+                padding-top: 5%; /* Add padding top for landscape mode */
+                padding-bottom: 20%; /* Add padding bottom for landscape mode */
+                max-width: 100%; /* Ensure image does not exceed container */
+                max-height: unset; /* Ensure image does not exceed container */
+            }
+        }
+        .form-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="background-image"></div>
+
+<div class="content-image">
+    <img src="assets/thiep.png" alt="Card">
+</div>
+
+<div class="bottom-bar">
+    <img src="assets/4.png" class="button" alt="RSVP" onclick="openPopup()">
+    <img src="assets/5.png" class="logo" alt="Logo">
+    <img src="assets/3.png" class="button" alt="View Album" onclick="viewAlbum()">
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="popup" id="popup">
+    <form class="popup-form">
+        <select id="attendance" name="attendance">
+            <option value="" disabled selected hidden>Bạn sẽ tham gia chứ?</option>
+            <option value="Undetermined">Chưa xác định trước được</option>
+            <option value="Yes">Tôi sẽ tham gia</option>
+            <option value="No">Tôi không tham gia được</option>
+        </select>
+        <select id="guest-number" name="guest-number">
+            <option value="" disabled selected hidden>Bạn có người đi cùng không?</option>
+            <option value="1">Tôi đi một mình</option>
+            <option value="2">Đi cùng 1 người</option>
+            <option value="3">Đi cùng 2 người</option>
+            <option value="4">Đi cùng 3 người</option>
+            <option value="5">Đi cùng 4 người</option>
+        </select>
+        <div class="buttons">
+            <img src="assets/o-1-3.png" alt="Submit" onclick="submitForm()">
+            <img src="assets/o-1-4.png" alt="Close" onclick="closePopup()">
+        </div>
+    </form>
+</div>
+
+<script>
+    function viewAlbum() {
+        window.location.href = 'https://wedding9300.wpcomstaging.com/album';
+    }
+
+    function openPopup() {
+        document.getElementById('popup').classList.add('show');
+        document.getElementById('overlay').classList.add('show');
+    }
+
+    function closePopup() {
+        document.getElementById('popup').classList.remove('show');
+        document.getElementById('overlay').classList.remove('show');
+    }
+
+    document.getElementById('overlay').addEventListener('click', closePopup);
+
+    function submitForm() {
+    // Gather form data
+    const dropdown1 = document.getElementById('attendance');
+    const dropdown1Value = dropdown1.value;
+    const dropdown2 = document.getElementById('guest-number');
+    let dropdown2Value = dropdown2.value;
+
+    // Check the value of dropdown1
+    if (dropdown1Value === 'Yes') {
+        if (!dropdown2Value) {
+            alert('Vui lòng chọn số người đi cùng.');
+            return; // Cancel form submission
+        }
+    } else if (dropdown1Value === 'No' || dropdown1Value === 'Undetermined') {
+        dropdown2Value = '0'; // Set dropdown2 to 0
+    }
+
+    // Send data to a backend endpoint using fetch
+    fetch('https://wedding.intertechs.online/rsvp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            attendance: dropdown1Value,
+            guestNumber: dropdown2Value
+            // Add more fields as needed
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Cảm ơn bạn đã phản hồi');
+        closePopup();
+        window.location.href = 'https://wedding9300.wpcomstaging.com/album?showBottomBar=false';
+    })
+    .catch(error => {
+        console.error('Error saving form data:', error);
+        alert('Failed to submit form. Please try again later.');
+        // Optionally handle error display or retry logic
+    });
+}
+
+
+</script>
+
+</body>
+</html>
